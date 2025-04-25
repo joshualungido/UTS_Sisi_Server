@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: uts_joshua_app
+    working_dir: /var/www/UTSJoshua
+    volumes:
+      - ./:/var/www/UTSJoshua
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=uts_joshua_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    depends_on:
+      - db
+    networks:
+      - uts_joshua_network
+
+  db:
+    image: mysql:8.0
+    container_name: uts_joshua_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=uts_joshua_db
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - uts_joshua_network
+
+volumes:
+  db_data:
+
+networks:
+  uts_joshua_network:
+    driver: bridge
